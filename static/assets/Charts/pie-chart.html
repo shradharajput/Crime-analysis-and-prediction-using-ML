@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>ZingSoft Demo</title>
+
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+
+</head>
+
+<body>
+  <div id='myChart'></div>
+  <script>
+    s = "/static/assets/data/fulljsondata2012.json";
+    function readTextFile(file, callback) {
+      var rawFile = new XMLHttpRequest();
+      rawFile.overrideMimeType("application/json");
+      rawFile.open("GET", file, true);
+      rawFile.onreadystatechange = function () {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+          callback(rawFile.responseText);
+        }
+      }
+      rawFile.send(null);
+    }
+
+    readTextFile(s, function (text) {
+      var data = JSON.parse(text);
+
+      var retrievedObject = localStorage.getItem('testObject');
+
+      obj = JSON.parse(retrievedObject)
+
+      var state_arr = obj.state;
+
+      var year = obj.year[obj.year.length - 1];
+
+      var crime = obj.crime_type[obj.crime_type.length - 1];
+
+      var series_new = [];
+      var i;
+      for (i = 0; i < state_arr.length; i++) {
+        var j;
+        for (j = 0; j < data.length; j++) {
+
+          if (String(data[j].YEAR) == year && data[j].STATE_UT == state_arr[i]) {
+            var element = {};
+            element.text = state_arr[i];
+            element.values = [data[j][crime]];
+            series_new.push(element);
+          }
+
+        }
+      }
+
+      ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "b55b025e438fa8a98e32482b5f768ff5"];
+      var myConfig = {
+        "type": "pie3d", //"pie", "pie3d", "ring", or "ring3d"
+        "title": {
+          "text": "Pie Chart"
+        },
+        "plot": {
+          "offset-r": "25%" //provide percentage value
+        },
+        "series": series_new
+      };
+
+      zingchart.render({
+        id: 'myChart',
+        data: myConfig,
+        height: 400,
+        width: "100%"
+      });
+
+    });
+  </script>
+</body>
+
+</html>

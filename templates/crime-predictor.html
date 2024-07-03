@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrimePredictor</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='assets/css/neumorphism.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='assets/css/crime-predictor.css')}}">
+    <!-- header footer script -->
+
+    <script src="https://kit.fontawesome.com/7bdcd846e8.js" crossorigin="anonymous"></script>
+
+
+    <script type="module" src="{{url_for('static',filename='assets/javascript/header-footer.js')}}"></script>
+
+
+
+
+    <!-- live time -->
+    <script>
+        function startTime() {
+            var time = new Date();
+            document.getElementById('txt').innerHTML = time.toLocaleString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+            });
+        }
+    </script>
+    <!-- sound script -->
+    <script>
+        function audio() {
+            var audio = new Audio("{{url_for('static',filename='assets/sound/click-sound.mp3')}}");
+            audio.play();
+
+        }
+    </script>
+    <!-- table creation scrippt-->
+    <script>
+        function datafillfun(n) {
+
+            //console.log("testing run...");
+            var s = "{{url_for('static',filename='assets/data/predictinputjsondata.json')}}";
+
+
+            document.getElementById('myGrid').innerHTML = '';
+
+
+            // function for reading json file
+            function readTextFile(file, callback) {
+                var rawFile = new XMLHttpRequest();
+                rawFile.overrideMimeType("application/json");
+                rawFile.open("GET", file, true);
+                rawFile.onreadystatechange = function () {
+                    if (rawFile.readyState === 4 && rawFile.status == "200") {
+                        callback(rawFile.responseText);
+                    }
+                }
+                rawFile.send(null);
+            }
+
+            readTextFile(s, function (text) {
+                var data = JSON.parse(text);
+                console.log(data, "inputdata");
+
+
+                var tableBody =
+                    '<h5>Input Table</h5><table class="table table-hover" ><tr><th class="border-0" scope="col" id="state-table-heading">ds</th>';
+
+
+                // if (document.getElementById('total-check').checked == true) {
+                tableBody += '<th class="border-0" scope="col" id="total-table-heading">y</th>';
+                // }
+                // if (document.getElementById('murder-check').checked == true) {
+                // tableBody += '<th class="border-0" scope="col" id="total-table-heading">PRIMARY TYPE</th>';
+                // // }
+                // // if (document.getElementById('kidnapping-check').checked == true) {
+                // tableBody += '<th class="border-0" scope="col" id="total-table-heading">LOCATION</th>';
+                // // }
+                // if (document.getElementById('robbery-check').checked == true) {
+                //   tableBody += '<th class="border-0" scope="col" id="total-table-heading">ROBBERY</th>';
+                // }
+
+
+
+
+
+                tableBody += '</tr>';
+
+                for (i = 0; i < data.length; i++) {
+                    console.log(i, "testingggg");
+                }
+
+
+                data.forEach(function (d) {
+                    tableBody += '<tr><th scope="row">' + d.ds;
+                    //   if (document.getElementById('total-check').checked == true) {
+                    tableBody += '</th><td>' + d.y;
+
+                    tableBody += '</td></tr>';
+                });
+                tableBody += '<table>';
+
+                // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+
+                var divContainer = document.getElementById("myGrid");
+                divContainer.innerHTML = tableBody;
+            });
+        }
+    </script>
+
+    <!-- table creation scrippt-->
+    <script>
+        function datafillfun1(n) {
+
+            //console.log("testing run...");
+            var s = "{{url_for('static',filename='assets/data/predictoutjsondata.json')}}";
+
+
+
+            document.getElementById('myGrid1').innerHTML = '';
+
+
+            // function for reading json file
+            function readTextFile(file, callback) {
+                var rawFile = new XMLHttpRequest();
+                rawFile.overrideMimeType("application/json");
+                rawFile.open("GET", file, true);
+                rawFile.onreadystatechange = function () {
+                    if (rawFile.readyState === 4 && rawFile.status == "200") {
+                        callback(rawFile.responseText);
+                    }
+                }
+                rawFile.send(null);
+            }
+
+            readTextFile(s, function (text) {
+                var data = JSON.parse(text);
+                console.log(data);
+
+
+                var tableBody =
+                    '<h5>Output Table</h5><table class="table table-hover" ><tr><th class="border-0" scope="col" id="state-table-heading">ds</th>';
+
+
+                tableBody += '<th class="border-0" scope="col" id="total-table-heading">trend</th>';
+                tableBody += '<th class="border-0" scope="col" id="total-table-heading">yhat_lower</th>';
+                tableBody += '<th class="border-0" scope="col" id="total-table-heading">yhat_upper</th>';
+                tableBody += '<th class="border-0" scope="col" id="total-table-heading">yhat</th>';
+
+
+                tableBody += '</tr>';
+
+
+                data.forEach(function (d) {
+                    tableBody += '<tr><th scope="row">' + d.ds;
+                    tableBody += '</th><td>' + d.trend;
+                    tableBody += '</th><td>' + d.yhat_lower;
+                    tableBody += '</th><td>' + d.yhat_upper;
+                    tableBody += '</th><td>' + d.yhat;
+
+                    tableBody += '</td></tr>';
+                });
+                tableBody += '<table>';
+
+                // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+
+                var divContainer = document.getElementById("myGrid1");
+                divContainer.innerHTML = tableBody;
+            });
+        }
+    </script>
+
+<script>
+    // On mouse-over, execute myFunction
+    function buttonfunction() {
+      document.getElementById("testrun").click(); // Click on the checkbox
+   // console.log("button chal rhi");
+    
+    }
+    </script>
+
+</head>
+
+<body onload="startTime();datafillfun(1);datafillfun1(1);">
+    <my-header></my-header>
+
+    <div id="upper" class="row pl-6 pr-6">
+        <div id="upload" class="col-4">
+            <div id="card1" class="upload_items pt-4">
+                <div class="card bg-primary border-light shadow-soft">
+                    <div class="card-body">
+                        <h3 class="h5 card-title mt-3">CrimePrediction</h3>
+                        <p class="card-text">We are using FB prophet charting library to show the future crime trend for
+                            the relevant dataset upladed.</p>
+                    </div>
+                </div>
+
+                <div id="upload-file" class="upload_items pt-4 "
+                    style="display: flex;align-items: center;flex-wrap: nowrap;">
+                    <div class="custom-file">
+                        <form action="http://localhost:5000/uploader" method="POST" enctype="multipart/form-data">
+                            <input type="file" class="custom-file-input" id="customFile" name="file">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="submit" name="testrun" id="testrun" style="visibility: hidden;" />
+
+                        </form>
+                    </div>
+                    <br>
+                    <div class="btn btn-primary text-success" style="margin-left: 10px;
+                    width: 172px;" onclick="buttonfunction();"> Load Data <i class="fas fa-chevron-right"></i></div>
+
+                </div>
+
+                <div id="upload-metadata" class="upload_items pt-4">
+                    <div class="card bg-primary border-light shadow-soft">
+                        <div class="card-body">
+                            <h3 class="h5 card-title mt-3">Metadata</h3>
+                            <p class="card-text">Dataset contains the following columns:
+                            <ul>
+                                <li>ID: Unique identifier for the record.</li>
+                                <li>Date: Date when the incident occurred.</li>
+                                <li>Primary Type: The primary description of the crime.</li>
+                                <li>Location: The location where the incident occurred in a format that allows for
+                                    creation of maps and other geographic operations on this data portal. This
+                                    location
+                                    is shifted from the actual location for partial redaction but falls on the same
+                                    block.</li>
+                            </ul>
+                            </p>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="upload_table" class="col-6">
+            <div id="table-card" class="upload_items pt-4">
+                <div class="card bg-primary border-light shadow-soft" style="height:595px; width:900px">
+                    <div class="card-body" id="myGrid" style="overflow: scroll">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ----------------------------middle panel----------------------------------->
+
+    <div id="middle-panel" class="row pt-5 pl-6 pr-6">
+        <div class="col-6">
+            <div class="card bg-primary border-light shadow-soft">
+                <div class="card-body">
+                    <h3 class="h3 card-title mt-3">Prediction Methodology</h3>
+                    <!-- <h2>Enter something about the process</h2> -->
+                    <p>
+                        Prediction task was done using fbprophet forecasting. fbprophet’s default settings produce
+                        forecasts that are often accurate as those produced by skilled forecasters, with much less
+                        effort. With Prophet, we are not stuck with the results of a completely automatic procedure if
+                        the forecast is not satisfactory as an analyst with no training in time series methods can
+                        improve or tweak forecasts using a variety of easily-interpretable parameters.The Prophet uses a
+                        decomposable time series model with three main model components: trend, seasonality, and
+                        holidays.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4" style="display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;">
+            <h4>Press the button to run.</h4>
+            <div class="btn btn-primary btn-pill text-success">Run <i class="fas fa-chevron-right"></i></div>
+
+        </div>
+    </div>
+
+
+
+
+    <!-- -----------------------lower panel-------------------------------- -->
+
+
+
+
+    <div id="lower" class="row pt-5 pl-6 pr-6 pb-6">
+        <div class="col-6">
+            <div id="table">
+                <div class="card bg-primary border-light shadow-soft" style="height:900px;">
+                    <div class="card-body" id="myGrid1" style="overflow: scroll">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div id="chart-1" class="pt-1">
+                <div class="card bg-primary border-light shadow-soft">
+                    <div class="card-body">
+                        <h3 class="h5 card-title mt-3">Visualizing future results</h3>
+                        <img src="{{url_for('static',filename='assets/images/predictionresult.png')}}">
+                    </div>
+                </div>
+            </div>
+
+            <div id="chart-2" class="pt-4 ">
+                <div class="card bg-primary border-light shadow-soft">
+                    <div class="card-body">
+                        <h3 class="h5 card-title mt-3">Expected trend in the future</h3>
+                        <img src="{{url_for('static',filename='assets/images/predictiontrend.png')}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+
+
+
+
+
+    <my-footer></my-footer>
+
+</body>
+
+</html>

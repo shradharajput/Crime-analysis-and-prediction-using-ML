@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>ZingSoft Demo</title>
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <!-- 
+			Point ZingChart to modules folder so ZingChart
+			can automatically grab the CSV module 
+		-->
+  <script>
+    zingchart.MODULESDIR = "https://cdn.zingchart.com/modules/";
+  </script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart--container {
+      min-height: 150px;
+      overflow: auto;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    #myChart {
+      width: 100%;
+      height: 100%;
+    }
+
+    .zc-ref {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- CHART CONTAINER -->
+  <div id="myChart" class="chart--container">
+    <a class="zc-ref" href="https://www.zingchart.com/">Powered by ZingChart</a>
+  </div>
+  <script>
+
+    s = "/static/assets/data/fulljsondata2012.json";
+
+
+    // function for reading json file
+    function readTextFile(file, callback) {
+      var rawFile = new XMLHttpRequest();
+      rawFile.overrideMimeType("application/json");
+      rawFile.open("GET", file, true);
+      rawFile.onreadystatechange = function () {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+          callback(rawFile.responseText);
+        }
+      }
+      rawFile.send(null);
+    }
+
+    readTextFile(s, function (text) {
+      var data = JSON.parse(text);
+      console.log(data);
+
+
+
+
+      var retrievedObject = localStorage.getItem('testObject');
+
+obj = JSON.parse(retrievedObject)
+
+//      console.log('retrievedObject: ', obj, "in pie chart file");
+
+
+var state_arr = obj.state;
+
+var year = obj.year[obj.year.length-1];
+
+var crime=obj.crime_type[obj.crime_type.length-1];
+console.log(data[0][crime],"crime-type");
+
+
+      // var arr = []
+
+      var series_new = [];
+      var element={};
+      element.id = 'theworld';
+      element.parent = '';
+      element.name = 'The World';
+     // element.value = data[i].MURDER;
+      element.group = '';
+
+      series_new.push(element);
+    
+
+      var i;
+
+    for(j=0;j<state_arr.length;j++){
+      console.log(state_arr[j],"state data");
+      for (i = 0; i < data.length; i++) {
+        if (data[i].YEAR == year && data[i].STATE_UT == state_arr[j]) {
+          console.log(data[i].STATE_UT, data[i][crime], "testing")
+          var element={};
+          element.id = data[i].STATE_UT;
+          element.parent = 'theworld';
+          element.name = data[i].STATE_UT;
+          element.value = data[i][crime];
+          element.group = 'europe'
+
+          series_new.push(element);
+        }
+      }
+    }
+
+
+
+      console.log(series_new);
+
+
+      console.log("bubble-chart file running");
+
+
+
+
+
+      ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "b55b025e438fa8a98e32482b5f768ff5"]; // window:load event for Javascript to run after HTML
+      // because this Javascript is injected into the document head
+      window.addEventListener('load', () => {
+        // Javascript code to execute after DOM content
+
+        // full ZingChart schema can be found here:
+        // https://www.zingchart.com/docs/api/json-configuration/
+        let chartData = series_new;   
+
+        let chartConfig = {
+          type: 'bubble-pack',
+          plotarea: {
+            margin: 10
+          },
+          options: {
+            padding: 2,
+            minSize: 3,
+            groupFilter: ['europe'],
+            format: {
+              short: true,
+              decimals: 1,
+              decimalsSeparator: '.',
+              thousandsSeparator: ','
+            }
+          },
+          series: chartData
+        };
+
+        zingchart.loadModules('bubble-pack', function () {
+          zingchart.render({
+            id: 'myChart',
+            data: chartConfig,
+            height: '100%',
+            width: '100%',
+          });
+        });
+      });
+
+    });
+  </script>
+</body>
+
+</html>
